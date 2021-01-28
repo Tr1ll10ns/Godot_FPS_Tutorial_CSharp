@@ -1,0 +1,53 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\Godot\\Projects\\Godot_FPS_Starter\\Godot FPS.csproj": {}
+  },
+  "projects": {
+    "D:\\Godot\\Projects\\Godot_FPS_Starter\\Godot FPS.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Godot\\Projects\\Godot_FPS_Starter\\Godot FPS.csproj",
+        "projectName": "Godot FPS",
+        "projectPath": "D:\\Godot\\Projects\\Godot_FPS_Starter\\Godot FPS.csproj",
+        "packagesPath": "C:\\Users\\Elias Post\\.nuget\\packages\\",
+        "outputPath": "D:\\Godot\\Projects\\Godot_FPS_Starter\\.mono\\temp\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Elias Post\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net472"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net472": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net472": {
+          "dependencies": {
+            "Microsoft.NETFramework.ReferenceAssemblies": {
+              "target": "Package",
+              "version": "[1.0.0, )",
+              "autoReferenced": true
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.0.100\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
