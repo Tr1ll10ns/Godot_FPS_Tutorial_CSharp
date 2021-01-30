@@ -1,26 +1,27 @@
 using Godot;
 using System;
 
-public class Pistol : Spatial
+public class Pistol : Weapon
 {
-    public float Damage = 15;
 
-    public string IdleAnimationName = "Pistol_idle";
-    public string FireAnimationName = "Pistol_fire";
-
-    public bool WeaponEnabled = false;
 
     [Export]
     public PackedScene BulletScene;
 
-    public Player PlayerNode = null;
+
 
     public override void _Ready()
     {
+        Damage = 15;
 
+        IdleAnimationName = "Pistol_idle";
+        FireAnimationName = "Pistol_fire";
+
+        WeaponEnabled = false;
+        PlayerNode = null;
     }
 
-    public void FireWeapon()
+    public override void FireWeapon()
     {
         Bullet bullet = BulletScene.Instance() as Bullet;
         Node sceneRoot = GetTree().Root.GetChildren()[0] as Node;
@@ -31,7 +32,7 @@ public class Pistol : Spatial
         bullet.Damage = Damage;
     }
 
-    public bool EquipWeapon()
+    public override bool EquipWeapon()
     {
         if (PlayerNode.AnimationPlayer.currentState.ToString() == IdleAnimationName)
         {
@@ -45,7 +46,7 @@ public class Pistol : Spatial
         return false;
     }
 
-    public bool UnequipWeapon()
+    public override bool UnequipWeapon()
     {
         if (PlayerNode.AnimationPlayer.currentState.ToString() == IdleAnimationName)
         {

@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 public class Player : KinematicBody, HittableByBullets
 {
@@ -34,14 +35,47 @@ public class Player : KinematicBody, HittableByBullets
 
     private SpotLight _flashlight;
 
+    string currentWeaponName = "UNARMED";
+    Dictionary<string, Weapon> weapons = new Dictionary<string, Weapon>() { { "UNARMED", null }, { "KNIFE", null }, { "PISTOL", null }, { "RIFLE", null } };
+    Dictionary<int, string> weaponNumberToName = new Dictionary<int, string>() { { 0, "UNARMED" }, { 1, "KNIFE" }, { 2, "PISTOL" }, { 3, "RIFLE" } };
+    Dictionary<string, int> weaponNameToNumber = new Dictionary<string, int>() { { "UNARMED", 0 }, { "KNIFE", 1 }, { "PISTOL", 2 }, { "RIFLE", 3 } };
+    bool changingWeapon = false;
+    string changingWeaponName = "UNARMED";
+
+    float health = 100;
+
+    Control UIStatusLabel;
+
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
         _flashlight = GetNode<SpotLight>("Rotation_Helper/Flashlight");
         _camera = GetNode<Camera>("Rotation_Helper/Camera");
         AnimationPlayer = GetNode<AnimationPlayerManager>("Rotation_Helper/Model/Animation_Player");
+        // AnimationPlayer.CallbackFunction = this.FireBullet;
         _rotationHelper = GetNode<Spatial>("Rotation_Helper");
 
+        weapons["KNIFE"] = GetNode<Weapon>("Rotation_Helper/Gun_Fire_Points/Knife_Point");
+        weapons["PISTOL"] = GetNode<Weapon>("Rotation_Helper/Gun_Fire_Points/Pistol_Point");
+        weapons["RIFLE"] = GetNode<Weapon>("Rotation_Helper/Gun_Fire_Points/Rifle_Point");
+
+        var gun_aim_point_pos = GetNode<Spatial>("Rotation_Helper/Gun_Aim_Point").GlobalTransform.origin;
+
+        foreach (KeyValuePair<string, Weapon> weapon in weapons)
+        {
+            Weapon weaponNode = weapon.Value;
+            if (weaponNode != null)
+            {
+                weaponNode.PlayerNode = this;
+                weaponNode.LookAt(gun_aim_point_pos, new Vector3(0, 1, 0));
+                weaponNode.RotateObjectLocal(new Vector3(0, 1, 0), Mathf.Deg2Rad(180));
+            }
+        }
+
+        currentWeaponName = "UNARMED";
+        changingWeaponName = "UNARMED";
+
+        UIStatusLabel = GetNode<Control>("HUD/Panel/Gun_label");
 
         Input.SetMouseMode(Input.MouseMode.Captured);
     }

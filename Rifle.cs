@@ -1,23 +1,23 @@
 using Godot;
 using System;
 
-public class Rifle : Spatial
+public class Rifle : Weapon
 {
-    float Damage = 4;
 
-    public string IdleAnimationName = "Rifle_idle";
-    public string FireAnimationName = "Rifle_fire";
-
-    public bool WeaponEnabled = false;
-
-    public Player PlayerNode = null;
 
     public override void _Ready()
     {
+        Damage = 4;
 
+        IdleAnimationName = "Rifle_idle";
+        FireAnimationName = "Rifle_fire";
+
+        WeaponEnabled = false;
+
+        PlayerNode = null;
     }
 
-    public void FireWeapon()
+    public override void FireWeapon()
     {
         RayCast ray = GetNode<RayCast>("Ray_Cast"); ;
         ray.ForceRaycastUpdate();
@@ -37,7 +37,7 @@ public class Rifle : Spatial
         }
     }
 
-    public bool EquipWeapon()
+    public override bool EquipWeapon()
     {
         if (PlayerNode.AnimationPlayer.currentState.ToString() == IdleAnimationName)
         {
@@ -51,7 +51,7 @@ public class Rifle : Spatial
         return false;
     }
 
-    public bool UnequipWeapon()
+    public override bool UnequipWeapon()
     {
         if (PlayerNode.AnimationPlayer.currentState.ToString() == IdleAnimationName)
         {

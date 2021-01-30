@@ -1,23 +1,22 @@
 using Godot;
 using System;
 
-public class Knife : Spatial
+public class Knife : Weapon
 {
-    float Damage = 40;
-
-    public string IdleAnimationName = "Knife_idle";
-    public string FireAnimationName = "Knife_fire";
-
-    public bool WeaponEnabled = false;
-
-    public Player PlayerNode = null;
 
     public override void _Ready()
     {
+        Damage = 40;
 
+        IdleAnimationName = "Knife_idle";
+        FireAnimationName = "Knife_fire";
+
+        WeaponEnabled = false;
+
+        PlayerNode = null;
     }
 
-    public void FireWeapon()
+    public override void FireWeapon()
     {
         Area area = GetNode<Area>("Area");
         var bodies = area.GetOverlappingBodies();
@@ -36,7 +35,7 @@ public class Knife : Spatial
 
     }
 
-    public bool EquipWeapon()
+    public override bool EquipWeapon()
     {
         if (PlayerNode.AnimationPlayer.currentState.ToString() == IdleAnimationName)
         {
@@ -50,7 +49,7 @@ public class Knife : Spatial
         return false;
     }
 
-    public bool UnequipWeapon()
+    public override bool UnequipWeapon()
     {
         if (PlayerNode.AnimationPlayer.currentState.ToString() == IdleAnimationName)
         {
