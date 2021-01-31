@@ -8,8 +8,8 @@ public class Knife : Weapon
     {
         Damage = 40;
 
-        IdleAnimationName = "Knife_idle";
-        FireAnimationName = "Knife_fire";
+        IdleAnimationState = AnimationPlayerManager.AnimationState.Knife_idle;
+        FireAnimationState = AnimationPlayerManager.AnimationState.Knife_fire;
 
         WeaponEnabled = false;
 
@@ -37,7 +37,7 @@ public class Knife : Weapon
 
     public override bool EquipWeapon()
     {
-        if (PlayerNode.AnimationPlayer.currentState.ToString() == IdleAnimationName)
+        if (PlayerNode.AnimationPlayer.currentState.ToString() == IdleAnimationState.ToString())
         {
             WeaponEnabled = true;
             return true;
@@ -51,7 +51,7 @@ public class Knife : Weapon
 
     public override bool UnequipWeapon()
     {
-        if (PlayerNode.AnimationPlayer.currentState.ToString() == IdleAnimationName)
+        if (PlayerNode.AnimationPlayer.currentState.ToString() == IdleAnimationState.ToString())
         {
             if (PlayerNode.AnimationPlayer.currentState.ToString() != "Knife_unequip")
             {

@@ -4,18 +4,15 @@ using System;
 public class Pistol : Weapon
 {
 
-
     [Export]
     public PackedScene BulletScene;
-
-
 
     public override void _Ready()
     {
         Damage = 15;
 
-        IdleAnimationName = "Pistol_idle";
-        FireAnimationName = "Pistol_fire";
+        IdleAnimationState = AnimationPlayerManager.AnimationState.Pistol_idle;
+        FireAnimationState = AnimationPlayerManager.AnimationState.Pistol_fire;
 
         WeaponEnabled = false;
         PlayerNode = null;
@@ -34,7 +31,7 @@ public class Pistol : Weapon
 
     public override bool EquipWeapon()
     {
-        if (PlayerNode.AnimationPlayer.currentState.ToString() == IdleAnimationName)
+        if (PlayerNode.AnimationPlayer.currentState.ToString() == IdleAnimationState.ToString())
         {
             WeaponEnabled = true;
             return true;
@@ -48,7 +45,7 @@ public class Pistol : Weapon
 
     public override bool UnequipWeapon()
     {
-        if (PlayerNode.AnimationPlayer.currentState.ToString() == IdleAnimationName)
+        if (PlayerNode.AnimationPlayer.currentState.ToString() == IdleAnimationState.ToString())
         {
             if (PlayerNode.AnimationPlayer.currentState.ToString() != "Pistol_unequip")
             {

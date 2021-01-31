@@ -4,13 +4,12 @@ using System;
 public class Rifle : Weapon
 {
 
-
     public override void _Ready()
     {
         Damage = 4;
 
-        IdleAnimationName = "Rifle_idle";
-        FireAnimationName = "Rifle_fire";
+        IdleAnimationState = AnimationPlayerManager.AnimationState.Rifle_idle;
+        FireAnimationState = AnimationPlayerManager.AnimationState.Rifle_fire;
 
         WeaponEnabled = false;
 
@@ -39,7 +38,7 @@ public class Rifle : Weapon
 
     public override bool EquipWeapon()
     {
-        if (PlayerNode.AnimationPlayer.currentState.ToString() == IdleAnimationName)
+        if (PlayerNode.AnimationPlayer.currentState.ToString() == IdleAnimationState.ToString())
         {
             WeaponEnabled = true;
             return true;
@@ -53,7 +52,7 @@ public class Rifle : Weapon
 
     public override bool UnequipWeapon()
     {
-        if (PlayerNode.AnimationPlayer.currentState.ToString() == IdleAnimationName)
+        if (PlayerNode.AnimationPlayer.currentState.ToString() == IdleAnimationState.ToString())
         {
             if (PlayerNode.AnimationPlayer.currentState.ToString() != "Rifle_unequip")
             {

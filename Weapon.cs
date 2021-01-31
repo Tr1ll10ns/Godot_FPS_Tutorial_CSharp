@@ -4,10 +4,11 @@ using System;
 public abstract class Weapon : Spatial
 {
     public float Damage;
-    public string IdleAnimationName;
-    public string FireAnimationName;
+    public AnimationPlayerManager.AnimationState IdleAnimationState;
+    public AnimationPlayerManager.AnimationState FireAnimationState;
     public bool WeaponEnabled;
     public Player PlayerNode = null;
+
     public override void _Ready()
     {
 

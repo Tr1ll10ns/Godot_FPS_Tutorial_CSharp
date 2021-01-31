@@ -36,9 +36,9 @@ public class Player : KinematicBody, HittableByBullets
     private SpotLight _flashlight;
 
     string currentWeaponName = "UNARMED";
-    Dictionary<string, Weapon> weapons = new Dictionary<string, Weapon>() { { "UNARMED", null }, { "KNIFE", null }, { "PISTOL", null }, { "RIFLE", null } };
-    Dictionary<int, string> weaponNumberToName = new Dictionary<int, string>() { { 0, "UNARMED" }, { 1, "KNIFE" }, { 2, "PISTOL" }, { 3, "RIFLE" } };
-    Dictionary<string, int> weaponNameToNumber = new Dictionary<string, int>() { { "UNARMED", 0 }, { "KNIFE", 1 }, { "PISTOL", 2 }, { "RIFLE", 3 } };
+    Dictionary<string, Weapon> weapons = new Dictionary<string, Weapon>() { { "UNARMED", null }, { "KNIFE", null }, { "PISTOL", null }, { "RIFLE", null }, { "", null } };
+    Dictionary<int, string> weaponNumberToName = new Dictionary<int, string>() { { 0, "UNARMED" }, { 1, "KNIFE" }, { 2, "PISTOL" }, { 3, "RIFLE" }, { -1, "" } };
+    Dictionary<string, int> weaponNameToNumber = new Dictionary<string, int>() { { "UNARMED", 0 }, { "KNIFE", 1 }, { "PISTOL", 2 }, { "RIFLE", 3 }, { "", 0 } };
     bool changingWeapon = false;
     string changingWeaponName = "UNARMED";
 
@@ -52,14 +52,14 @@ public class Player : KinematicBody, HittableByBullets
         _flashlight = GetNode<SpotLight>("Rotation_Helper/Flashlight");
         _camera = GetNode<Camera>("Rotation_Helper/Camera");
         AnimationPlayer = GetNode<AnimationPlayerManager>("Rotation_Helper/Model/Animation_Player");
-        // AnimationPlayer.CallbackFunction = this.FireBullet;
+        AnimationPlayer.CallbackFunction = FireBullet;
         _rotationHelper = GetNode<Spatial>("Rotation_Helper");
 
         weapons["KNIFE"] = GetNode<Weapon>("Rotation_Helper/Gun_Fire_Points/Knife_Point");
         weapons["PISTOL"] = GetNode<Weapon>("Rotation_Helper/Gun_Fire_Points/Pistol_Point");
         weapons["RIFLE"] = GetNode<Weapon>("Rotation_Helper/Gun_Fire_Points/Rifle_Point");
 
-        var gun_aim_point_pos = GetNode<Spatial>("Rotation_Helper/Gun_Aim_Point").GlobalTransform.origin;
+        Vector3 gunAimPointPos = GetNode<Spatial>("Rotation_Helper/Gun_Aim_Point").GlobalTransform.origin;
 
         foreach (KeyValuePair<string, Weapon> weapon in weapons)
         {
@@ -67,7 +67,7 @@ public class Player : KinematicBody, HittableByBullets
             if (weaponNode != null)
             {
                 weaponNode.PlayerNode = this;
-                weaponNode.LookAt(gun_aim_point_pos, new Vector3(0, 1, 0));
+                weaponNode.LookAt(gunAimPointPos, new Vector3(0, 1, 0));
                 weaponNode.RotateObjectLocal(new Vector3(0, 1, 0), Mathf.Deg2Rad(180));
             }
         }
@@ -84,6 +84,8 @@ public class Player : KinematicBody, HittableByBullets
     {
         ProcessInput(delta);
         ProcessMovement(delta);
+        ProcessChangingWeapons(delta);
+
     }
 
     private void ProcessInput(float delta)
@@ -146,6 +148,54 @@ public class Player : KinematicBody, HittableByBullets
             else
                 _flashlight.Show();
         }
+        //  ----------------------------------
+        //  Changing weapons.
+        int weaponChangeNumber = weaponNameToNumber[currentWeaponName];
+
+        if (Input.IsActionPressed("weapon_1"))
+        { weaponChangeNumber = 0; }
+        if (Input.IsActionPressed("weapon_2"))
+        { weaponChangeNumber = 1; }
+        if (Input.IsActionPressed("weapon_3"))
+        { weaponChangeNumber = 2; }
+        if (Input.IsActionPressed("weapon_4"))
+        { weaponChangeNumber = 3; }
+
+        if (Input.IsActionJustPressed("shift_weapon_positive"))
+        { weaponChangeNumber += 1; }
+        if (Input.IsActionJustPressed("shift_weapon_negative"))
+        { weaponChangeNumber -= 1; }
+
+        weaponChangeNumber = Mathf.Clamp(weaponChangeNumber, 0, weaponNumberToName.Count - 1);
+
+        if (changingWeapon == false)
+        {
+            if (weaponNumberToName[weaponChangeNumber] != currentWeaponName)
+            {
+                changingWeaponName = weaponNumberToName[weaponChangeNumber];
+                changingWeapon = true;
+            }
+        }
+        //  ----------------------------------
+
+        //  ----------------------------------
+        //  Firing the weapons
+        if (Input.IsActionPressed("fire"))
+        {
+            if (changingWeapon == false)
+            {
+                Weapon currentWeapon = weapons[currentWeaponName];
+                if (currentWeapon != null)
+                {
+                    if (AnimationPlayer.currentState == currentWeapon.IdleAnimationState)
+                    {
+                        AnimationPlayer.SetAnimation(currentWeapon.FireAnimationState);
+                    }
+                }
+            }
+        }
+        //  ----------------------------------
+
     }
 
     private void ProcessMovement(float delta)
@@ -178,6 +228,69 @@ public class Player : KinematicBody, HittableByBullets
         _vel.x = hvel.x;
         _vel.z = hvel.z;
         _vel = MoveAndSlide(_vel, new Vector3(0, 1, 0), false, 4, Mathf.Deg2Rad(MaxSlopeAngle));
+    }
+
+    public void ProcessChangingWeapons(float delta)
+    {
+        if (changingWeapon == true)
+
+        {
+            bool weaponUnequipped = false;
+            Weapon currentWeapon = weapons[currentWeaponName];
+
+            if (currentWeapon == null)
+            {
+                weaponUnequipped = true;
+            }
+            else
+            {
+                if (currentWeapon.WeaponEnabled == true)
+                {
+                    weaponUnequipped = currentWeapon.UnequipWeapon();
+                }
+                else
+                {
+                    weaponUnequipped = true;
+                }
+            }
+
+            if (weaponUnequipped == true)
+            {
+                bool weaponEquipped = false;
+                Weapon weaponToEquip = weapons[changingWeaponName];
+
+                if (weaponToEquip == null)
+                {
+                    weaponEquipped = true;
+                }
+                else
+                {
+                    if (weaponToEquip.WeaponEnabled == false)
+                    { weaponEquipped = weaponToEquip.EquipWeapon(); }
+                    else
+                    { weaponEquipped = true; }
+                }
+
+                if (weaponEquipped == true)
+                {
+                    changingWeapon = false;
+                    currentWeaponName = changingWeaponName;
+                    changingWeaponName = "";
+                }
+            }
+        }
+    }
+
+    public void FireBullet()
+    {
+        if (changingWeapon)
+        {
+
+        }
+        else
+        {
+            weapons[currentWeaponName].FireWeapon();
+        }
     }
 
     public override void _Input(InputEvent @event)

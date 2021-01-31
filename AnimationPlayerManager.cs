@@ -75,7 +75,7 @@ public class AnimationPlayerManager : AnimationPlayer
     {
         if (animationName == currentState)
         {
-            GD.Print("AnimationPlayer_Manager.gd -- WARNING: animation is already ", animationName);
+            GD.Print("AnimationPlayer_Manager.cs -- WARNING: animation is already ", animationName);
 
             return true;
         }
@@ -83,7 +83,7 @@ public class AnimationPlayerManager : AnimationPlayer
         if (HasAnimation(animationName.ToString()))
         {
             var possibleAnimations = states[currentState];
-            if (Array.IndexOf(possibleAnimations, animationName) != -1)
+            if (Array.IndexOf(possibleAnimations, animationName.ToString()) != -1)
             {
                 currentState = animationName;
 
@@ -93,7 +93,7 @@ public class AnimationPlayerManager : AnimationPlayer
             }
             else
             {
-                GD.Print("AnimationPlayer_Manager.gd -- WARNING: Cannot change to ", animationName, " from ", currentState);
+                GD.Print("AnimationPlayer_Manager.cs -- WARNING: Cannot change to ", animationName, " from ", currentState);
 
                 return false;
             }
